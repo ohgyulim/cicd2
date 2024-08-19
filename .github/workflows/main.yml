@@ -43,6 +43,24 @@ jobs:
           file: ./docker/front.Dockerfile
           push: true
           tags: ohgyulim/test-front:1.0
+      - name: restart frontend container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 175.197.41.193
+          username: ogl
+          key: ${{ secrets.SSH_KEY }}
+          port: 8007
+          script: |
+            kubectl apply -f - <<EOF
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: frontend
+            spec:
+              containers:
+                - name: frontend
+                  image: ohgyulim/test-front:1.0
+            EOF
 
   backend-deploy:
     if: github.ref == 'refs/heads/backend'
