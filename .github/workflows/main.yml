@@ -6,7 +6,7 @@ on:
     
 jobs:
   frontend-deploy:
-    if: github.ref == 'refs/heads/frontend'
+    if: github.ref_name == 'frontend'
     name: Deploy to K8S
     runs-on: ubuntu-latest
 
