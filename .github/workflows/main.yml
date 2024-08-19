@@ -76,5 +76,7 @@ jobs:
       - name: push
         uses: docker/build-push-action@v6
         with:
+          context: ./docker
+          file: ./docker/Dockerfile
           push: true
           tags: ohgyulim/test:0.0.1-SNAPSHOT
