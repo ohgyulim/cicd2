@@ -47,7 +47,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 175.197.41.193
-          username: root
+          username: ogl
           key: ${{ secrets.SSH_KEY }}
           port: 8007
           script: |
