@@ -2,25 +2,79 @@ name: devops test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ frontend, backend ]
     
 jobs:
-  deploy:
-    name: Deploy to EC2
+  frontend-deploy:
+    if: github.ref == 'refs/heads/frontend'
+    name: Deploy to K8S
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-    - name: Checkout sources
-      uses: actions/checkout@v4
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-    - name: Build with Gradle
-      run: |
-        cd docker
-        chmod +x ./gradlew
-        ./gradlew buildDocker
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: |
+          cd docker
+          chmod +x ./gradlew
+          ./gradlew docker
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ohgyulim/test-front:1.0
+
+  backend-deploy:
+    if: github.ref == 'refs/heads/backend'
+    name: Deploy to K8S
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: |
+          cd docker
+          chmod +x ./gradlew
+          ./gradlew docker -Pplatform=backend
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ohgyulim/test:0.0.1-SNAPSHOT
