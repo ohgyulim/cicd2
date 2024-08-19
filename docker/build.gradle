@@ -42,12 +42,21 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+def platform = project.hasProperty('platform') ? project.property('platform') : "frontend"
+
 docker {
-    // 이미지 생성
-    name "ohgyulim/test:" + version
-    files tasks.bootJar.outputs.files
-    buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
-    dockerfile file('Dockerfile')
+    if (platform == "frontend") {
+        name "ohgyulim/test-front:1.0"
+        files "front/dist"
+        buildArgs(['DIST': "/"])
+        dockerfile file('front.Dockerfile')
+    } else {
+        // 이미지 생성
+        name "ohgyulim/test:" + version
+        files tasks.bootJar.outputs.files
+        buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
+        dockerfile file('Dockerfile')
+    }
 }
 
 task buildFront(type: Exec) {
