@@ -5,6 +5,7 @@ plugins {
     id("com.palantir.docker") version "0.36.0"
 }
 
+
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
@@ -22,6 +23,9 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://releases.aspose.com/java/repo/"
+    }
 }
 
 dependencies {
@@ -30,6 +34,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation group: 'com.aspose', name: 'aspose-barcode', version: '24.7'
+    implementation group: 'com.aspose', name: 'aspose-barcode', classifier: 'javadoc', version: '24.7'
 }
 
 tasks.named('test') {
@@ -42,6 +48,7 @@ docker {
     files tasks.bootJar.outputs.files
     buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
     dockerfile file('Dockerfile')
+    push = true
 }
 
 task buildFront(type: Exec) {
