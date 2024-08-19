@@ -69,7 +69,7 @@ task buildFrontImage(type: Exec, dependsOn: buildFront) {
 }
 
 task buildDocker(type: Exec) {
-    commandLine './gradlew', 'docker'
+    commandLine './gradlew', 'docker', '-Pplatform=backend'
 }
 
 task dockerComposeUp(type: Exec, dependsOn: buildDocker) {
