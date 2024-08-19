@@ -47,7 +47,6 @@ def platform = project.hasProperty('platform') ? project.property('platform') : 
 docker {
     if (platform == "frontend") {
         name "ohgyulim/test-front:1.0"
-        files "./docker/front/dist"
         buildArgs(['DIST': "/"])
         dockerfile file('front.Dockerfile')
     } else {
